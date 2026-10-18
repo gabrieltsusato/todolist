@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <title>TodoList</title>
+  <script>
+    // Página de entrada: manda para o dashboard (logado) ou para o login
+    window.location.replace(localStorage.getItem("todolist_token") ? "dashboard.html" : "login.html");
+  </script>
+</head>
+<body></body>
+</html>

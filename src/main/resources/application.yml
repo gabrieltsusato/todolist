@@ -1,0 +1,33 @@
+# Configuração principal. Valores sensíveis vêm de variáveis de ambiente
+# (sintaxe ${VARIAVEL:valor-padrao}) para não ficarem "hardcoded" no repositório.
+spring:
+  application:
+    name: todolist
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/todolist}
+    username: ${DB_USER:todolist}
+    password: ${DB_PASSWORD:todolist}
+
+  jpa:
+    hibernate:
+      # "validate": o Hibernate apenas CONFERE se as entidades batem com o banco.
+      # Quem cria/altera tabelas é o Flyway (scripts em db/migration).
+      ddl-auto: validate
+    # Desligado de propósito: evita consultas "escondidas" ao banco durante a serialização do JSON.
+    open-in-view: false
+
+  flyway:
+    enabled: true
+
+app:
+  jwt:
+    # Chave secreta em Base64 usada para ASSINAR os tokens. Em produção, defina via variável de ambiente!
+    secret: ${JWT_SECRET:dG9kb2xpc3QtY2hhdmUtc2VjcmV0YS1hcGVuYXMtcGFyYS1kZXNlbnZvbHZpbWVudG8tdHJvcXVlLWVtLXByb2R1Y2Fv}
+    expiration-ms: ${JWT_EXPIRATION_MS:86400000}   # 24 horas
+  cors:
+    allowed-origins: ${CORS_ORIGINS:*}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html

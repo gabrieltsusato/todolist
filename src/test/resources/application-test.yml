@@ -1,0 +1,20 @@
+# Perfil "test": usa H2 em memória (modo PostgreSQL) em vez do PostgreSQL real.
+# O Hibernate cria as tabelas a partir das entidades e o Flyway fica desligado.
+spring:
+  datasource:
+    url: jdbc:h2:mem:todolist-test;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+  flyway:
+    enabled: false
+
+app:
+  jwt:
+    secret: dGVzdC1zZWNyZXQta2V5LXRlc3Qtc2VjcmV0LWtleS10ZXN0LXNlY3JldC1rZXk=
+    expiration-ms: 3600000
+  cors:
+    allowed-origins: "*"

@@ -1,0 +1,43 @@
+# Sobe o banco PostgreSQL e a API com um único comando:  docker compose up --build
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: todolist-db
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-todolist}
+      POSTGRES_USER: ${POSTGRES_USER:-todolist}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-todolist}
+    ports:
+      - "5432:5432"
+    volumes:
+      - todolist-data:/var/lib/postgresql/data   # dados persistem entre reinicializações
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-todolist} -d ${POSTGRES_DB:-todolist}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build: .
+    container_name: todolist-api
+    depends_on:
+      db:
+        condition: service_healthy   # só inicia a API quando o banco estiver pronto
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-todolist}
+      DB_USER: ${POSTGRES_USER:-todolist}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-todolist}
+      JWT_SECRET: ${JWT_SECRET:-dG9kb2xpc3QtY2hhdmUtc2VjcmV0YS1hcGVuYXMtcGFyYS1kZXNlbnZvbHZpbWVudG8tdHJvcXVlLWVtLXByb2R1Y2Fv}
+      JWT_EXPIRATION_MS: ${JWT_EXPIRATION_MS:-86400000}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+    ports:
+      - "8080:8080"
+  web:
+    image: nginx:alpine
+    container_name: todolist-web
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "5500:80"
+volumes:
+  todolist-data:
